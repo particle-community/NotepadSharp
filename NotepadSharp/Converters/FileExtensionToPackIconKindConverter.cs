@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace NotepadSharp.Converters;
 
-internal class FileExtensionToIconKindConverter : IValueConverter
+internal class FileExtensionToPackIconKindConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
@@ -103,6 +103,6 @@ internal class FileExtensionToIconKindConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 }

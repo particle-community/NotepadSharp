@@ -5,12 +5,12 @@ namespace NotepadSharp.Commands
     class RelayCommand : ICommand
     {
         private readonly Action<object?> _execute;
-        private readonly Predicate<object?>? _predicate;
+        private readonly Predicate<object?>? _canExecute;
 
-        public RelayCommand(Action<object?> execute, Predicate<object?>? predicate = null)
+        public RelayCommand(Action<object?> execute, Predicate<object?>? canExecute = null)
         {
             _execute = execute;
-            _predicate = predicate;
+            _canExecute = canExecute;
         }
 
         public event EventHandler? CanExecuteChanged
@@ -21,7 +21,7 @@ namespace NotepadSharp.Commands
 
         public bool CanExecute(object? parameter)
         {
-            return _predicate == null || _predicate(parameter);
+            return _canExecute == null || _canExecute(parameter);
         }
 
         public void Execute(object? parameter)

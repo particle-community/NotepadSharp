@@ -14,7 +14,7 @@
     <Window.Resources>
         <!-- Converters -->
         <converters:NullableStringToFileName x:Key="NullableStringToFileName"/>
-        <converters:FileExtensionToIconKindConverter x:Key="FileExtensionToIconKindConverter"/>
+        <converters:FileExtensionToPackIconKindConverter x:Key="FileExtensionToIconKindConverter"/>
 
         <!-- Styles -->
         <Style x:Key="TabItemCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
