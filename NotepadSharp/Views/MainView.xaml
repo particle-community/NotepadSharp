@@ -1,0 +1,112 @@
+﻿<Window x:Class="NotepadSharp.Views.MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:NotepadSharp.ViewModels"
+        xmlns:converters="clr-namespace:NotepadSharp.Converters"
+        d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
+        mc:Ignorable="d"
+        Title="NotepadSharp" MinHeight="450" MinWidth="800"
+        Style="{StaticResource MaterialDesignWindow}"
+        Icon="pack://application:,,,/Resources/Icons/NotepadSharpLogo.ico">
+    <Window.Resources>
+        <!-- Converters -->
+        <converters:NullableStringToFileName x:Key="NullableStringToFileName"/>
+        <converters:FileExtensionToIconKindConverter x:Key="FileExtensionToIconKindConverter"/>
+
+        <!-- Styles -->
+        <Style x:Key="TabItemCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="True">
+                    <Setter Property="Foreground" Value="Gold"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsSelected}" Value="False">
+                    <Setter Property="Foreground" Value="LightGray"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Ctrl" Key="N" Command="{Binding NewCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="O" Command="{Binding OpenCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding SaveCommand}"/>
+        <KeyBinding Modifiers="Ctrl+Shift" Key="S" Command="{Binding SaveAsCommand}"/>
+        <KeyBinding Modifiers="Alt" Key="F4" Command="{Binding ExitCommand}"/>
+    </Window.InputBindings>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="New" InputGestureText="Ctrl+N" Command="{Binding NewCommand}"
+                          Icon="{materialDesign:PackIcon Kind=File}"/>
+                <MenuItem Header="Open..." InputGestureText="Ctrl+O" Command="{Binding OpenCommand}"
+                          Icon="{materialDesign:PackIcon Kind=FolderOpen}"/>
+                <MenuItem Header="Save" InputGestureText="Ctrl+S" Command="{Binding SaveCommand}"
+                          Icon="{materialDesign:PackIcon Kind=ContentSave}"/>
+                <MenuItem Header="Save As..." InputGestureText="Ctrl+Shift+S" Command="{Binding SaveAsCommand}"/>
+                <Separator/>
+                <MenuItem Header="Exit" InputGestureText="Alt+F4" Command="{Binding ExitCommand}"
+                          Icon="{materialDesign:PackIcon Kind=ExitToApp}"/>
+            </MenuItem>
+            <MenuItem Header="Edit">
+                <MenuItem Header="Cut" Command="Cut"
+                          Icon="{materialDesign:PackIcon Kind=ContentCut}"/>
+                <MenuItem Header="Copy" Command="Copy"
+                          Icon="{materialDesign:PackIcon Kind=ContentCopy}"/>
+                <MenuItem Header="Paste" Command="Paste"
+                          Icon="{materialDesign:PackIcon Kind=ContentPaste}"/>
+            </MenuItem>
+        </Menu>
+        <materialDesign:Card DockPanel.Dock="Bottom" HorizontalContentAlignment="Right" Margin="8" Background="#FF212121">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding SelectedDocument.Content.Length, StringFormat={}{0} characters}" Margin="8,8,8,8"/>
+                <TextBlock Text="|" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding SelectedDocument.Encoding.EncodingName}" Margin="8,8,16,8"/>
+            </StackPanel>
+        </materialDesign:Card>
+        <TabControl ItemsSource="{Binding Documents}"
+                    SelectedItem="{Binding SelectedDocument, UpdateSourceTrigger=PropertyChanged}"
+                    HorizontalContentAlignment="Left">
+            <TabControl.Template>
+                <ControlTemplate TargetType="TabControl">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                            <TabPanel x:Name="HeaderPanel" IsItemsHost="True" />
+                        </ScrollViewer>
+                        <ContentPresenter Grid.Row="1" x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
+                    </Grid>
+                </ControlTemplate>
+            </TabControl.Template>
+            
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="{Binding Extension, Converter={StaticResource FileExtensionToIconKindConverter}}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Name, Converter={StaticResource NullableStringToFileName}}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="*" Visibility="{Binding IsModified, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <Button VerticalAlignment="Center"
+                                Margin="8,0,0,0"
+                                Content="{materialDesign:PackIcon Kind=Close}"
+                                Command="{Binding DataContext.CloseCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                Style="{StaticResource TabItemCloseButtonStyle}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <TextBox Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
+                             Margin="8" FontSize="16" TextWrapping="Wrap" AcceptsReturn="True"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             VerticalScrollBarVisibility="Auto"/>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+    </DockPanel>
+</Window>
