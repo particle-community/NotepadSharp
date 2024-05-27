@@ -28,6 +28,7 @@ internal static class FileService
         try
         {
             File.WriteAllText(document.FullPath, document.Content, document.Encoding);
+            document.SaveChanges();
             return true;
         }
         catch

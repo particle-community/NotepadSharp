@@ -14,7 +14,7 @@
     <Window.Resources>
         <!-- Converters -->
         <converters:NullableStringToFileName x:Key="NullableStringToFileName"/>
-        <converters:FileExtensionToPackIconKindConverter x:Key="FileExtensionToIconKindConverter"/>
+        <converters:FileExtensionToPackIconKindConverter x:Key="FileExtensionToPackIconKindConverter"/>
 
         <!-- Styles -->
         <Style x:Key="TabItemCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
@@ -44,7 +44,8 @@
                           Icon="{materialDesign:PackIcon Kind=FolderOpen}"/>
                 <MenuItem Header="Save" InputGestureText="Ctrl+S" Command="{Binding SaveCommand}"
                           Icon="{materialDesign:PackIcon Kind=ContentSave}"/>
-                <MenuItem Header="Save As..." InputGestureText="Ctrl+Shift+S" Command="{Binding SaveAsCommand}"/>
+                <MenuItem Header="Save As..." InputGestureText="Ctrl+Shift+S" Command="{Binding SaveAsCommand}"
+                          Icon="{materialDesign:PackIcon Kind=ContentSaveEdit}"/>
                 <Separator/>
                 <MenuItem Header="Exit" InputGestureText="Alt+F4" Command="{Binding ExitCommand}"
                           Icon="{materialDesign:PackIcon Kind=ExitToApp}"/>
@@ -56,7 +57,11 @@
                           Icon="{materialDesign:PackIcon Kind=ContentCopy}"/>
                 <MenuItem Header="Paste" Command="Paste"
                           Icon="{materialDesign:PackIcon Kind=ContentPaste}"/>
+                <Separator/>
+                <MenuItem Header="Select All" Command="SelectAll"
+                          Icon="{materialDesign:PackIcon Kind=SelectAll}"/>
             </MenuItem>
+            <MenuItem Header="View" IsEnabled="False"/>
         </Menu>
         <materialDesign:Card DockPanel.Dock="Bottom" HorizontalContentAlignment="Right" Margin="8" Background="#FF212121">
             <StackPanel Orientation="Horizontal">
@@ -86,7 +91,7 @@
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="{Binding Extension, Converter={StaticResource FileExtensionToIconKindConverter}}" VerticalAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="{Binding Extension, Converter={StaticResource FileExtensionToPackIconKindConverter}}" VerticalAlignment="Center"/>
                         <TextBlock Text="{Binding Name, Converter={StaticResource NullableStringToFileName}}" Margin="8,0,0,0" VerticalAlignment="Center"/>
                         <TextBlock Text="*" Visibility="{Binding IsModified, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                         <Button VerticalAlignment="Center"

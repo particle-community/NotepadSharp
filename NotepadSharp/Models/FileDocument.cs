@@ -5,9 +5,9 @@ namespace NotepadSharp.Models;
 
 public class FileDocument : BaseModel
 {
+    private string _originalContent;
     private string _content;
     private string? _fullPath;
-    private bool _isModified;
     private Encoding _encoding;
 
     public FileDocument() : this(null, string.Empty, Encoding.Default) { }
@@ -15,6 +15,7 @@ public class FileDocument : BaseModel
     public FileDocument(string? fullPath, string content, Encoding encoding)
     {
         _fullPath = fullPath;
+        _originalContent = content;
         _content = content;
         _encoding = encoding;
     }
@@ -40,18 +41,8 @@ public class FileDocument : BaseModel
         set
         {
             _content = value;
-            IsModified = true;
             OnPropertyChanged();
-        }
-    }
-
-    public bool IsModified
-    {
-        get => _isModified;
-        set
-        {
-            _isModified = value;
-            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsModified));
         }
     }
 
@@ -68,4 +59,12 @@ public class FileDocument : BaseModel
     public string? Name => Path.GetFileName(FullPath);
 
     public string? Extension => Path.GetExtension(FullPath);
+
+    public bool IsModified => _originalContent != _content;
+
+    public void SaveChanges()
+    {
+        _originalContent = _content;
+        OnPropertyChanged(nameof(IsModified));        
+    }
 }

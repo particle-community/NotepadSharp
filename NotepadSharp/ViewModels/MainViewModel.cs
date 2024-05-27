@@ -1,16 +1,17 @@
 ﻿using Microsoft.Win32;
 using NotepadSharp.Commands;
+using NotepadSharp.Helpers;
 using NotepadSharp.Models;
 using NotepadSharp.Services;
-using System.Windows;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 
 namespace NotepadSharp.ViewModels;
 
 internal class MainViewModel : BaseViewModel
 {
-    private const string FilesFilter = "All types (*.*)|*.*|Text files (*.txt)|*.txt";
+    private static readonly string FileFilter = ConfigurationHelper.GetFileFilter();
 
     private FileDocument? _fileDocument;
 
@@ -63,21 +64,23 @@ internal class MainViewModel : BaseViewModel
     {
         OpenFileDialog dialog = new()
         {
-            Filter = FilesFilter
+            Filter = FileFilter,
+            Multiselect = true,
+            Title = "Open"
         };
         if (dialog.ShowDialog() == true)
         {
-            FileDocument? existingDocument = Documents.FirstOrDefault(doc => doc.FullPath == dialog.FileName);
-            if (existingDocument == null)
+            FileDocument? document = null;
+            foreach (string filePath in dialog.FileNames)
             {
-                FileDocument document = FileService.Load(dialog.FileName);
-                Documents.Add(document);
-                SelectedDocument = document;
+                document = Documents.FirstOrDefault(doc => doc.FullPath == filePath);
+                if (document == null)
+                {
+                    document = FileService.Load(filePath);
+                    Documents.Add(document);
+                }
             }
-            else
-            {
-                SelectedDocument = existingDocument;
-            }
+            SelectedDocument = document;
         }
     }
 
@@ -92,7 +95,7 @@ internal class MainViewModel : BaseViewModel
             }
             else
             {
-                document.IsModified = !FileService.Save(document);
+                FileService.Save(document);
             }
         }
     }
@@ -106,12 +109,13 @@ internal class MainViewModel : BaseViewModel
             {
                 AddExtension = true,
                 FileName = document.Name ?? "untitled.txt",
-                Filter = FilesFilter
+                Filter = FileFilter,
+                Title = "Save"
             };
             if (dialog.ShowDialog() == true)
             {
                 document.FullPath = dialog.FileName;
-                document.IsModified = !FileService.Save(document);
+                FileService.Save(document);
             }
         }
     }
