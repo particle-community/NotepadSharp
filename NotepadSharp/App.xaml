@@ -4,6 +4,8 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
     <Application.Resources>
         <ResourceDictionary>
+            <SolidColorBrush x:Key="PrimaryBrush" Color="Gold"/>
+            <SolidColorBrush x:Key="SecondaryBrush" Color="Crimson"/>
             <ResourceDictionary.MergedDictionaries>
                 <materialDesign:CustomColorTheme BaseTheme="Dark"
                                                  PrimaryColor="Gold"

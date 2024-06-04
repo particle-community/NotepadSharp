@@ -14,8 +14,8 @@ internal static class FileService
         {
             throw new FileNotFoundException();
         }
-        string content = File.ReadAllText(filePath);
         Encoding encoding = GetEncoding(filePath);
+        string content = File.ReadAllText(filePath, encoding);
         return new FileDocument(filePath, content, encoding);
     }
 
@@ -37,10 +37,13 @@ internal static class FileService
         }
     }
 
-    private static Encoding GetEncoding(string fileName)
+    public static Encoding GetEncoding(string filename)
     {
-        using var reader = new StreamReader(fileName, true);
-        reader.Peek();
+        using var reader = new StreamReader(filename, true);
+        if (reader.Peek() >= 0)
+        {
+            reader.Read();
+        }
         return reader.CurrentEncoding;
     }
 }

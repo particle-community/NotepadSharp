@@ -4,6 +4,7 @@ using NotepadSharp.Helpers;
 using NotepadSharp.Models;
 using NotepadSharp.Services;
 using System.Collections.ObjectModel;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 
@@ -14,9 +15,12 @@ internal class MainViewModel : BaseViewModel
     private static readonly string FileFilter = ConfigurationHelper.GetFileFilter();
 
     private FileDocument? _fileDocument;
+    private int _zoomLevel;
 
     public MainViewModel()
     {
+        Encodings = new(Encoding.GetEncodings().Select(e => e.GetEncoding()));
+
         FileDocument newDocument = new();
         Documents = [newDocument];
         SelectedDocument = newDocument;
@@ -29,6 +33,8 @@ internal class MainViewModel : BaseViewModel
         ExitCommand = new RelayCommand(Exit);
     }
 
+    public List<Encoding> Encodings { get; private set; }
+
     public ObservableCollection<FileDocument> Documents { get; private set; }
 
     public FileDocument? SelectedDocument
@@ -37,6 +43,16 @@ internal class MainViewModel : BaseViewModel
         set
         {
             _fileDocument = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public int ZoomLevel
+    {
+        get => _zoomLevel;
+        set
+        {
+            _zoomLevel = value;
             OnPropertyChanged();
         }
     }
