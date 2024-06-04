@@ -13,6 +13,9 @@ namespace NotepadSharp.ViewModels;
 internal class MainViewModel : BaseViewModel
 {
     private static readonly string FileFilter = ConfigurationHelper.GetFileFilter();
+    private static readonly int DefaultZoomLevel = ConfigurationHelper.DefaultZoomLevel;
+    private static readonly int MinZoomLevel = ConfigurationHelper.MinZoomLevel;
+    private static readonly int MaxZoomLevel = ConfigurationHelper.MaxZoomLevel;
 
     private FileDocument? _fileDocument;
     private int _zoomLevel;
@@ -25,11 +28,19 @@ internal class MainViewModel : BaseViewModel
         Documents = [newDocument];
         SelectedDocument = newDocument;
 
+        ZoomLevel = DefaultZoomLevel;
+
         NewCommand = new RelayCommand(New);
         OpenCommand = new RelayCommand(Open);
         SaveCommand = new RelayCommand(Save, CanSave);
         SaveAsCommand = new RelayCommand(SaveAs, CanSaveAs);
+
         CloseCommand = new RelayCommand(Close);
+
+        RestoreZoomCommand = new RelayCommand(RestoreZoom);
+        ZoomInCommand = new RelayCommand(ZoomIn);
+        ZoomOutCommand = new RelayCommand(ZoomOut);
+
         ExitCommand = new RelayCommand(Exit);
     }
 
@@ -54,19 +65,20 @@ internal class MainViewModel : BaseViewModel
         {
             _zoomLevel = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(ZoomLevelRatio));
         }
     }
 
+    public double ZoomLevelRatio => ZoomLevel / (double)DefaultZoomLevel;
+
     public ICommand NewCommand { get; set; }
-
     public ICommand OpenCommand { get; set; }
-
     public ICommand SaveCommand { get; set; }
-
     public ICommand SaveAsCommand { get; set; }
-
     public ICommand CloseCommand { get; set; }
-
+    public ICommand RestoreZoomCommand { get; set; }
+    public ICommand ZoomInCommand { get; set; }
+    public ICommand ZoomOutCommand { get; set; }
     public ICommand ExitCommand { get; set; }
 
     public void New(object? parameter = null)
@@ -183,7 +195,28 @@ internal class MainViewModel : BaseViewModel
         }
     }
 
-    public void Exit(object? parameter)
+    public void RestoreZoom(object? parameter = null)
+    {
+        ZoomLevel = DefaultZoomLevel;
+    }
+
+    public void ZoomIn(object? parameter = null)
+    {
+        if (ZoomLevel < MaxZoomLevel)
+        {
+            ZoomLevel += 2;
+        }
+    }
+
+    public void ZoomOut(object? parameter = null)
+    {
+        if (ZoomLevel > MinZoomLevel)
+        {
+            ZoomLevel -= 2;
+        }
+    }
+
+    public void Exit(object? parameter = null)
     {
         Application.Current.Shutdown();
     }

@@ -7,6 +7,10 @@ namespace NotepadSharp.Helpers;
 
 internal static class ConfigurationHelper
 {
+    public static readonly int DefaultZoomLevel;
+    public static readonly int MinZoomLevel;
+    public static readonly int MaxZoomLevel;
+
     private static readonly NameValueCollection _fileFilters;
     private static readonly NameValueCollection _fileIcons;
 
@@ -14,6 +18,10 @@ internal static class ConfigurationHelper
     {
         _fileFilters = (NameValueCollection)ConfigurationManager.GetSection("fileFilters");
         _fileIcons = (NameValueCollection)ConfigurationManager.GetSection("fileIcons");
+
+        DefaultZoomLevel = int.Parse(ConfigurationManager.AppSettings["DefaultZoomLevel"]!);
+        MinZoomLevel = int.Parse(ConfigurationManager.AppSettings["MinZoomLevel"]!);
+        MaxZoomLevel = int.Parse(ConfigurationManager.AppSettings["MaxZoomLevel"]!);
     }
 
     public static string GetFileFilter()

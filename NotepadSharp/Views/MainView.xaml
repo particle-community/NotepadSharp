@@ -32,6 +32,9 @@
         <KeyBinding Modifiers="Ctrl" Key="O" Command="{Binding OpenCommand}"/>
         <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding SaveCommand}"/>
         <KeyBinding Modifiers="Ctrl+Shift" Key="S" Command="{Binding SaveAsCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="D0" Command="{Binding RestoreZoomCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="Add" Command="{Binding ZoomInCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="Subtract" Command="{Binding ZoomOutCommand}"/>
         <KeyBinding Modifiers="Alt" Key="F4" Command="{Binding ExitCommand}"/>
     </Window.InputBindings>
     <DockPanel>
@@ -61,18 +64,27 @@
                           Icon="{materialDesign:PackIcon Kind=SelectAll}"/>
             </MenuItem>
             <MenuItem Header="View">
-                <MenuItem Header="Zoom" IsEnabled="False"/>
+                <MenuItem Header="Zoom" Icon="{materialDesign:PackIcon Kind=Magnify}">
+                    <MenuItem Header="Zoom In" InputGestureText="Ctrl+&quot;+&quot;" Command="{Binding ZoomInCommand}"
+                              Icon="{materialDesign:PackIcon Kind=ZoomIn}"/>
+                    <MenuItem Header="Zoom Out" InputGestureText="Ctrl+&quot;-&quot;" Command="{Binding ZoomOutCommand}"
+                              Icon="{materialDesign:PackIcon Kind=ZoomOut}"/>
+                    <MenuItem Header="Restore Default Zoom" InputGestureText="Ctrl+0" Command="{Binding RestoreZoomCommand}"
+                              Icon="{materialDesign:PackIcon Kind=Restore}"/>
+                </MenuItem>
             </MenuItem>
         </Menu>
         
         <ToolBarTray DockPanel.Dock="Bottom">
             <ToolBar VerticalContentAlignment="Center">
                 <TextBlock Text="{Binding SelectedDocument.Content.Length, StringFormat={}{0} characters}"
-                           VerticalAlignment="Center"
-                           Margin="8"/>
+                           VerticalAlignment="Center" Margin="8"/>
                 <Separator/>
                 <ComboBox ItemsSource="{Binding Encodings}" SelectedItem="{Binding SelectedDocument.Encoding}"
                           DisplayMemberPath="EncodingName" Margin="8"/>
+                <Separator/>
+                <TextBlock Text="{Binding ZoomLevelRatio, UpdateSourceTrigger=PropertyChanged, StringFormat={}Zoom: {0:P0}}"
+                           VerticalAlignment="Center" Margin="8"/>
             </ToolBar>
         </ToolBarTray>
         
@@ -117,7 +129,7 @@
             <TabControl.ContentTemplate>
                 <DataTemplate>
                     <TextBox Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
-                             Margin="8" FontSize="16" TextWrapping="Wrap" AcceptsReturn="True"
+                             Margin="8" FontSize="{Binding DataContext.ZoomLevel, RelativeSource={RelativeSource AncestorType=Window}}" TextWrapping="Wrap" AcceptsReturn="True"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              VerticalScrollBarVisibility="Auto"/>
                 </DataTemplate>
